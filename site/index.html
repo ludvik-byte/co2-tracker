@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cesta na polovinu · CO₂ tracker</title>
+<meta name="description" content="Jak svět a jeho největší emitenti plní trajektorii IPCC pro 1,5 °C. Fakta ze zdrojů, aktualizace každý týden.">
+<meta name="theme-color" content="#003366">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%23003366'/%3E%3Cpath d='M22 7 13 22h6l-2 11 10-16h-6l2-10z' fill='%23cedc00'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap&subset=latin,latin-ext" rel="stylesheet">
+<style>
+:root{
+  --navy:#003366; --krem:#efeae2; --zelena:#249e6b; --limetka:#cedc00; --cervena:#b8504a; --bila:#fff;
+  --navy-60:#5a7b9c; --navy-40:#93a9be; --navy-15:#dbe2ea; --krem-tmavsi:#e4ded4;
+  --text:#003366; --text-mut:#4d6f92; --seda:#9a948b;
+  --r:18px; --r-mala:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:Montserrat,Arial,sans-serif;background:var(--krem);color:var(--text);line-height:1.5;font-size:16px}
+a{color:inherit}
+.obal{max-width:1160px;margin:0 auto;padding:0 16px}
+h1,h2,h3{font-weight:800;line-height:1.15;letter-spacing:-.01em}
+h2{font-size:clamp(1.3rem,2.6vw,1.75rem);margin-bottom:.35em}
+.mut{color:var(--text-mut)}
+.male{font-size:.8rem}
+.cislo{font-variant-numeric:tabular-nums}
+
+/* hlavička */
+.hlavicka{background:var(--navy);color:var(--krem)}
+.hlavicka__vnitrek{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-top:14px;padding-bottom:14px}
+.hlavicka img{height:40px;width:auto;display:block}
+.hlavicka__stitek{margin-left:auto;font-size:.8rem;color:#c3d3e2;text-align:right}
+.hero{padding:34px 0 8px;position:relative;overflow:hidden}
+.hero__stitek{display:inline-block;border:1.6px solid var(--navy);border-radius:999px;padding:4px 14px;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);max-width:22ch;margin-bottom:.3em}
+.hero__perex{font-size:clamp(1rem,1.7vw,1.15rem);max-width:62ch;color:var(--text-mut)}
+.hero__vitr{position:absolute;right:-20px;top:10px;width:min(300px,34vw);opacity:.9;pointer-events:none}
+.hl{background:var(--limetka);padding:.02em .18em;border-radius:4px}
+.akce{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.btn{font:inherit;font-weight:700;font-size:.9rem;border:1.6px solid var(--navy);background:transparent;color:var(--navy);border-radius:999px;padding:10px 20px;cursor:pointer}
+.btn--plna{background:var(--navy);color:var(--krem)}
+.btn:hover{background:var(--limetka);border-color:var(--limetka);color:var(--navy)}
+
+/* varování */
+.varovani{margin-top:18px;display:grid;gap:8px}
+.varovani div{background:#f6e3df;border-left:5px solid var(--cervena);border-radius:var(--r-mala);padding:10px 14px;font-size:.88rem}
+
+/* semafory */
+.semafory{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:26px 0 10px}
+.sem{background:var(--bila);border-radius:var(--r);padding:22px 22px 18px;display:flex;flex-direction:column;border-top:10px solid var(--seda)}
+.sem[data-s=na_trajektorii]{border-top-color:var(--zelena)}
+.sem[data-s=zlepsuje_se]{border-top-color:var(--limetka)}
+.sem[data-s=zhorsuje_se]{border-top-color:var(--cervena)}
+.sem__otazka{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-mut)}
+.sem__stav{display:flex;align-items:center;gap:10px;margin:8px 0 6px;font-size:1.35rem;font-weight:800}
+.tecka{width:18px;height:18px;border-radius:50%;flex:none;background:var(--seda)}
+[data-s=na_trajektorii] .tecka,.tecka[data-s=na_trajektorii]{background:var(--zelena)}
+[data-s=zlepsuje_se] .tecka,.tecka[data-s=zlepsuje_se]{background:var(--limetka)}
+[data-s=zhorsuje_se] .tecka,.tecka[data-s=zhorsuje_se]{background:var(--cervena)}
+.sem__cislo{font-size:2.3rem;font-weight:800;line-height:1.1;margin:6px 0 2px}
+.sem__jednotka{font-size:.85rem;color:var(--text-mut);font-weight:600}
+.sem__veta{font-size:.92rem;margin:10px 0 12px}
+.sem__tahouni{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:.84rem;margin-bottom:12px}
+.sem__tahouni h4{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-mut);margin-bottom:4px}
+.sem__tahouni li{list-style:none;display:flex;justify-content:space-between;gap:6px;border-bottom:1px solid var(--navy-15);padding:3px 0}
+.zdroj{margin-top:auto;font-size:.74rem;color:var(--text-mut);border-top:1px solid var(--navy-15);padding-top:10px}
+.zdroj a{font-weight:600}
+.zdroj .stare{color:var(--cervena);font-weight:700}
+
+/* karty s grafy */
+.sekce{margin-top:34px;margin-bottom:34px}
+.mrizka2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.karta{background:var(--bila);border-radius:var(--r);padding:22px}
+.karta h3{font-size:1.05rem;margin-bottom:2px}
+.karta__pod{font-size:.84rem;color:var(--text-mut);margin-bottom:10px}
+.graf{position:relative;width:100%}
+.graf svg{display:block;width:100%;overflow:visible}
+.graf text{font-family:Montserrat,Arial,sans-serif;fill:var(--text-mut);font-size:11px}
+.graf .osa{stroke:var(--navy-15)}
+.graf .nula{stroke:var(--navy-40)}
+.tip{position:absolute;pointer-events:none;background:var(--navy);color:var(--krem);font-size:.78rem;border-radius:8px;padding:6px 9px;white-space:nowrap;transform:translate(-50%,-110%);display:none;z-index:2}
+.legenda{display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:var(--text-mut);margin-top:8px}
+.legenda span{display:inline-flex;align-items:center;gap:6px}
+.legenda i{display:inline-block;width:18px;height:3px;border-radius:2px}
+.legenda i.car{border-top:2px dashed var(--seda);height:0;background:none}
+
+/* tabulka hráčů */
+.tab-obal{background:var(--bila);border-radius:var(--r);overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;min-width:900px;font-size:.86rem}
+th,td{padding:10px 10px;text-align:right;border-bottom:1px solid var(--navy-15);white-space:nowrap}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;color:var(--text-mut);font-weight:700;vertical-align:bottom;background:var(--bila)}
+th a{text-decoration:none;border-bottom:1px dotted var(--navy-40)}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--bila);z-index:1}
+td:first-child{font-weight:700}
+tr.svet td{background:#f7f4ef}
+tr.svet td:first-child{background:#f7f4ef}
+tr.domov td:first-child::after{content:" (doma)";font-weight:400;color:var(--text-mut);font-size:.75rem}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px 3px 6px;font-size:.74rem;font-weight:700;background:var(--krem)}
+.pill .tecka{width:11px;height:11px}
+.spark{display:block}
+.poz{color:var(--cervena);font-weight:700}
+.neg{color:var(--zelena);font-weight:700}
+td.st{text-align:left}
+
+/* zdroje a definice */
+.zdroje{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.zdroje dl{font-size:.84rem;display:grid;grid-template-columns:auto 1fr;gap:4px 12px}
+.zdroje dt{color:var(--text-mut)}
+.defs li{margin:0 0 8px 18px;font-size:.88rem}
+
+/* patička */
+.paticka{margin-top:40px;position:relative}
+.krajina{position:relative;height:170px;overflow:hidden}
+.krajina svg{position:absolute;bottom:0;left:0;width:100%;height:120px}
+.krajina img{position:absolute;bottom:52px}
+.paticka__pruh{background:var(--navy);color:#c3d3e2;font-size:.8rem;padding:18px 0}
+.paticka__pruh .obal{display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between}
+
+@media (max-width:900px){
+  .semafory,.mrizka2,.zdroje{grid-template-columns:1fr}
+  .hero__vitr{display:none}
+}
+@media (max-width:520px){
+  .hlavicka img{height:32px}
+  .sem__cislo{font-size:2rem}
+  .karta{padding:16px}
+  .sem{padding:18px 16px 14px}
+}
+</style>
+</head>
+<body>
+
+<header class="hlavicka">
+  <div class="obal hlavicka__vnitrek">
+    <img src="img/noho-logo.png" alt="NOHO Energy">
+    <div class="hlavicka__stitek">Interní přehled pro Akademii 2050<br><span id="aktualizace">Načítám data…</span></div>
+  </div>
+</header>
+
+<main id="prehled">
+  <section class="hero">
+    <div class="obal">
+      <img class="hero__vitr" src="img/noho-vitr-listky.png" alt="">
+      <span class="hero__stitek">Cesta na polovinu</span>
+      <h1>Plní svět trajektorii pro <span style="white-space:nowrap"><span class="hl">1,5&nbsp;°C</span>?</span></h1>
+      <p class="hero__perex">IPCC AR6: fosilní CO₂ o <strong>48 % níž v roce 2030</strong> a téměř nula v roce 2050, obojí oproti roku 2019. Stránka ukazuje, co říkají data a odkud jsou. Aktualizace každé pondělí.</p>
+      <div class="akce">
+        <button class="btn btn--plna" id="btn-csv" type="button">Stáhnout data (CSV)</button>
+        <button class="btn" id="btn-png" type="button">Stáhnout přehled (PNG)</button>
+      </div>
+      <div class="varovani" id="varovani"></div>
+
+      <div class="semafory">
+        <article class="sem" id="sem-fyzika">
+          <div class="sem__otazka">1 · Fyzika</div>
+          <h2 class="male" style="font-size:1rem;margin:6px 0 0">Roste koncentrace CO₂ pomaleji než dřív?</h2>
+          <div class="sem__stav"><span class="tecka"></span><span class="lbl">…</span></div>
+          <div><span class="sem__cislo cislo" data-k="cislo"></span> <span class="sem__jednotka" data-k="jed"></span></div>
+          <p class="sem__veta" data-k="veta"></p>
+          <div class="zdroj" data-zdroj="noaa"></div>
+        </article>
+        <article class="sem" id="sem-svet">
+          <div class="sem__otazka">2 · Svět</div>
+          <h2 class="male" style="font-size:1rem;margin:6px 0 0">Klesají globální emise dost rychle?</h2>
+          <div class="sem__stav"><span class="tecka"></span><span class="lbl">…</span></div>
+          <div><span class="sem__cislo cislo" data-k="cislo"></span> <span class="sem__jednotka" data-k="jed"></span></div>
+          <p class="sem__veta" data-k="veta"></p>
+          <div class="zdroj" data-zdroj="owid"></div>
+        </article>
+        <article class="sem" id="sem-hraci">
+          <div class="sem__otazka">3 · Hráči</div>
+          <h2 class="male" style="font-size:1rem;margin:6px 0 0">Kdo je na trajektorii a kdo táhne výsledek?</h2>
+          <div class="sem__stav"><span class="tecka"></span><span class="lbl">…</span></div>
+          <div><span class="sem__cislo cislo" data-k="cislo"></span> <span class="sem__jednotka" data-k="jed"></span></div>
+          <div class="sem__tahouni">
+            <div><h4>Nárůst za 5 let</h4><ul id="tah-nahoru"></ul></div>
+            <div><h4>Pokles za 5 let</h4><ul id="tah-dolu"></ul></div>
+          </div>
+          <div class="zdroj" data-zdroj="owid"></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="obal sekce">
+    <h2>Fyzika: koncentrace v atmosféře</h2>
+    <div class="mrizka2">
+      <div class="karta">
+        <h3>Koncentrace CO₂, Mauna Loa</h3>
+        <p class="karta__pod">Měsíční průměr a sezónně očištěná hodnota, ppm</p>
+        <div class="graf" id="g-konc"></div>
+        <div class="legenda"><span><i style="background:var(--navy-40)"></i>měsíční průměr</span><span><i style="background:var(--navy)"></i>sezónně očištěno</span></div>
+        <div class="zdroj" data-zdroj="noaa"></div>
+      </div>
+      <div class="karta">
+        <h3>Roční růst koncentrace</h3>
+        <p class="karta__pod">ppm za rok (1. 1. až 31. 12.) a klouzavý průměr za 5 let</p>
+        <div class="graf" id="g-rust"></div>
+        <div class="legenda"><span><i style="background:var(--navy-15);height:10px"></i>roční růst</span><span><i style="background:var(--navy)"></i>průměr 5 let</span></div>
+        <div class="zdroj" data-zdroj="noaa"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="obal sekce">
+    <h2>Svět: emise proti potřebné trajektorii</h2>
+    <div class="karta">
+      <h3>Globální fosilní emise CO₂</h3>
+      <p class="karta__pod">Gt CO₂ za rok, fosilní paliva a průmysl (bez změn využití půdy). Šedě trajektorie IPCC AR6 C1 pro CO₂: −48 % v 2030, −99 % v 2050 oproti 2019.</p>
+      <div class="graf" id="g-svet"></div>
+      <div class="legenda"><span><i style="background:var(--navy)"></i>skutečnost</span><span><i class="car"></i>potřebná trajektorie</span><span><i style="background:#f1d6d2;height:10px"></i>odchylka od trajektorie</span></div>
+      <div class="zdroj" data-zdroj="owid"></div>
+    </div>
+  </section>
+</main>
+
+<section class="obal sekce">
+  <h2>Hráči seřazení podle odchylky od trajektorie</h2>
+  <p class="mut" style="margin-bottom:12px;font-size:.9rem">Územní fosilní CO₂ podle Global Carbon Budget. Odchylka = o kolik jsou emise v posledním roce nad (+) nebo pod (−) vlastní trajektorií z roku 2019. Klikni na název sloupce pro definici.</p>
+  <div class="tab-obal">
+    <table id="tab">
+      <thead><tr>
+        <th>Hráč</th>
+        <th style="text-align:left"><a href="#def-stav">Stav</a></th>
+        <th><a href="#def-odchylka">Odchylka od<br>trajektorie</a></th>
+        <th><a href="#def-tempo">Tempo<br>5 let / rok</a></th>
+        <th><a href="#def-potreba">Potřebné<br>tempo / rok</a></th>
+        <th><a href="#zdroj-owid">Emise<br>Mt CO₂</a></th>
+        <th><a href="#zdroj-owid">t CO₂<br>na obyv.</a></th>
+        <th><a href="#def-2019">Změna<br>vs. 2019</a></th>
+        <th><a href="#def-vrchol">Změna<br>vs. vrchol</a></th>
+        <th style="text-align:left">1990 až 2030<br><span style="font-weight:400;text-transform:none">šedě trajektorie</span></th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="zdroj" data-zdroj="owid" style="margin-top:10px"></div>
+</section>
+
+<section class="obal sekce">
+  <h2>Zdroje a definice</h2>
+  <div class="zdroje">
+    <div class="karta" id="zdroje-seznam"></div>
+    <div class="karta">
+      <h3 style="margin-bottom:10px">Jak počítáme</h3>
+      <ul class="defs">
+        <li id="def-trajektorie"><strong>Trajektorie:</strong> přímka z hodnoty 2019 na −48 % v 2030 a dál na −99 % v 2050 (IPCC AR6 WG3, SPM C.1, cesty C1, CO₂). Cíl −43 % platí pro skleníkové plyny celkem (CO₂e), ne pro CO₂.</li>
+        <li id="def-odchylka"><strong>Odchylka od trajektorie:</strong> emise v posledním roce děleno hodnotou trajektorie v tomtéž roce, minus 1.</li>
+        <li id="def-tempo"><strong>Tempo 5 let:</strong> průměrná roční změna (CAGR) mezi posledním rokem a rokem o 5 let dříve. Když jeden z těch roků chybí, tempo se nepočítá.</li>
+        <li id="def-potreba"><strong>Potřebné tempo:</strong> roční změna, která z poslední známé hodnoty dovede na cíl 2030.</li>
+        <li id="def-stav"><strong>Stav:</strong> <em>na trajektorii</em> = skutečný roční pokles je aspoň 80 % potřebného; <em>mimo, ale zlepšuje se</em> = emise klesají, ale pomaleji; <em>mimo a zhoršuje se</em> = emise rostou nebo stagnují.</li>
+        <li id="def-fyzika"><strong>Semafor fyziky:</strong> průměr ročního růstu za posledních 5 let proti předchozím 5 letům. Zelená, když průměr klesne pod 0,5 ppm/rok.</li>
+        <li id="def-hraci"><strong>Semafor hráčů:</strong> zelená, když je aspoň polovina hráčů na trajektorii; limetková, když je hráčů na trajektorii a zlepšujících se víc než zhoršujících se; jinak červená. Tahouni = největší absolutní změna za 5 let; Německo a Česko se nepočítají, protože jsou v EU27.</li>
+        <li id="def-2019"><strong>Změna vs. 2019</strong> a <strong id="def-vrchol">vs. vrchol</strong>: poslední rok proti roku 2019, resp. proti nejvyššímu roku v celé řadě.</li>
+        <li><strong>Chybějící data</strong> se nedopočítávají; v grafu zůstává mezera.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="paticka">
+  <div class="krajina" aria-hidden="true">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0 70 C200 20 380 30 560 60 S900 110 1200 50 V120 H0Z" fill="#249e6b" opacity=".35"/><path d="M0 95 C260 60 520 70 760 92 S1060 115 1200 88 V120 H0Z" fill="#003366"/></svg>
+    <img src="img/noho-turbina.png" alt="" style="left:12%;height:120px">
+    <img src="img/noho-turbina.png" alt="" style="left:22%;height:84px;bottom:60px">
+    <img src="img/noho-stromek.png" alt="" style="left:58%;height:62px;bottom:46px">
+    <img src="img/noho-dum.png" alt="" style="left:66%;height:48px;bottom:40px">
+    <img src="img/noho-turbina.png" alt="" style="left:82%;height:104px;bottom:48px">
+  </div>
+  <div class="paticka__pruh"><div class="obal"><span>NOHO Energy a.s. · pro interní potřebu a Akademii 2050</span><span>Data: NOAA GML, Global Carbon Budget přes Our World in Data · #NOHObudoucnost</span></div></div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<script>
+(() => {
+"use strict";
+const $ = (s, el = document) => el.querySelector(s);
+const NF = (d) => new Intl.NumberFormat("cs-CZ", { minimumFractionDigits: d, maximumFractionDigits: d });
+const num = (x, d = 1) => x == null ? "n/a" : NF(d).format(x).replace("-", "−");
+const sgn = (x, d = 1) => x == null ? "n/a" : (x > 0 ? "+" : "") + num(x, d);
+const pct = (x, d = 1) => x == null ? "n/a" : sgn(x * 100, d) + " %";
+const datum = (iso) => { if (!iso) return "n/a"; const d = new Date(iso.length <= 10 ? iso + "T12:00:00" : iso); return d.toLocaleDateString("cs-CZ"); };
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+const LBL = { na_trajektorii: "Na trajektorii", zlepsuje_se: "Mimo, ale zlepšuje se", zhorsuje_se: "Mimo a zhoršuje se", bez_dat: "Bez dat" };
+const LBL_FYZ = { na_trajektorii: "Koncentrace přestává růst", zlepsuje_se: "Růst zpomaluje", zhorsuje_se: "Růst nezpomaluje", bez_dat: "Bez dat" };
+const CLR = { na_trajektorii: "#249e6b", zlepsuje_se: "#a9b400", zhorsuje_se: "#b8504a", bez_dat: "#9a948b" };
+let D = null;
+
+// ------------------------------------------------------------------ zdroje
+function zdrojHTML(key) {
+  const s = D.sources[key];
+  if (!s) return "Zdroj není k dispozici.";
+  let warn = "";
+  if (s.unavailable_since) warn = ` · <span class="stare">data nedostupná od ${datum(s.unavailable_since)}</span>`;
+  else if (s.stale) warn = ` · <span class="stare">data starší než obvykle</span>`;
+  return `Zdroj: <a href="${esc(s.page)}" target="_blank" rel="noopener">${esc(s.name)}</a> · data do ${esc(s.data_through || "n/a")}`
+    + ` · zdroj aktualizován ${datum(s.source_updated)} · staženo ${datum(s.fetched)}${warn} · <a href="#zdroj-${key}">detail</a>`;
+}
+
+function renderZdroje() {
+  const box = $("#zdroje-seznam");
+  box.innerHTML = `<h3 style="margin-bottom:10px">Zdroje</h3>` + Object.entries(D.sources).map(([k, s]) => `
+    <div id="zdroj-${k}" style="margin-bottom:16px">
+      <p style="font-weight:700;margin-bottom:4px"><a href="${esc(s.page)}" target="_blank" rel="noopener">${esc(s.name)}</a></p>
+      <dl>
+        <dt>Data do</dt><dd>${esc(s.data_through || "n/a")}</dd>
+        <dt>Aktualizace u zdroje</dt><dd>${datum(s.source_updated)}</dd>
+        <dt>Staženo</dt><dd>${datum(s.fetched)}</dd>
+        <dt>Stav</dt><dd>${s.unavailable_since ? `<span class="poz">nedostupné od ${datum(s.unavailable_since)}</span>` : s.stale ? `<span class="poz">zastaralé (limit ${s.max_age_days} dní)</span>` : "v pořádku"}</dd>
+        <dt>Licence</dt><dd>${esc(s.license || "n/a")}</dd>
+        <dt>Soubory</dt><dd>${Object.entries(s.files || {}).map(([n, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>`).join(", ")}</dd>
+      </dl>
+    </div>`).join("")
+    + `<p class="male mut">Trajektorie: <a href="${esc(D.settings.trajectory.source_url)}" target="_blank" rel="noopener">${esc(D.settings.trajectory.source)}</a></p>`;
+}
+
+function renderVarovani() {
+  const out = [];
+  for (const [k, s] of Object.entries(D.sources)) {
+    if (s.unavailable_since) out.push(`<strong>${esc(s.name)}:</strong> data nedostupná od ${datum(s.unavailable_since)}. Zobrazujeme poslední úspěšně stažená data (do ${esc(s.data_through || "n/a")}).`);
+    else if (s.stale) out.push(`<strong>${esc(s.name)}:</strong> data do ${esc(s.data_through)} jsou starší, než je u zdroje obvyklé.`);
+  }
+  $("#varovani").innerHTML = out.map(t => `<div>${t}</div>`).join("");
+}
+
+// ------------------------------------------------------------------ semafory
+function setSem(id, status, labels, cislo, jed, veta) {
+  const el = $(id);
+  el.dataset.s = status;
+  $(".lbl", el).textContent = labels[status] || status;
+  $("[data-k=cislo]", el).textContent = cislo;
+  $("[data-k=jed]", el).textContent = jed;
+  const v = $("[data-k=veta]", el); if (v) v.textContent = veta;
+}
+
+function renderSemafory() {
+  const f = D.physics;
+  if (f) setSem("#sem-fyzika", f.status, LBL_FYZ, num(f.latest.growth5_ppm, 2), `ppm/rok, průměr ${f.latest.growth5_year - 4} až ${f.latest.growth5_year}`, f.sentence);
+  else setSem("#sem-fyzika", "bez_dat", LBL_FYZ, "n/a", "", "Data NOAA nejsou k dispozici.");
+  const w = D.world;
+  if (w) setSem("#sem-svet", w.status, LBL, pct(w.latest.gap_pct, 0), `nad trajektorií v roce ${w.latest.year}`, w.sentence);
+  else setSem("#sem-svet", "bez_dat", LBL, "n/a", "", "Data OWID nejsou k dispozici.");
+  const p = D.players_summary;
+  if (p) {
+    setSem("#sem-hraci", p.status, LBL, `${p.counts.na_trajektorii} z ${p.n}`, `na trajektorii · ${p.counts.zlepsuje_se} se zlepšuje, ${p.counts.zhorsuje_se} zhoršuje`, "");
+    const byId = Object.fromEntries(D.players.items.map(x => [x.id, x]));
+    const li = (id) => `<li><span>${esc(byId[id].name)}</span><span class="cislo ${byId[id].change5_mt > 0 ? "poz" : "neg"}">${sgn(byId[id].change5_mt, 0)} Mt</span></li>`;
+    $("#tah-nahoru").innerHTML = p.drivers_up.map(li).join("") || "<li>nikdo</li>";
+    $("#tah-dolu").innerHTML = p.drivers_down.map(li).join("") || "<li>nikdo</li>";
+  } else setSem("#sem-hraci", "bez_dat", LBL, "n/a", "", "");
+  document.querySelectorAll("[data-zdroj]").forEach(el => el.innerHTML = zdrojHTML(el.dataset.zdroj));
+}
+
+// ------------------------------------------------------------------ grafy (vlastní SVG)
+const NS = "http://www.w3.org/2000/svg";
+function niceTicks(min, max, n = 5) {
+  const step0 = (max - min) / n, mag = Math.pow(10, Math.floor(Math.log10(step0)));
+  const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= step0);
+  const out = []; for (let v = Math.ceil(min / step) * step; v <= max + 1e-9; v += step) out.push(+v.toFixed(10));
+  return out;
+}
+function pathD(pts, x, y) { // null = mezera
+  let d = "", pen = false;
+  for (const [a, b] of pts) { if (b == null) { pen = false; continue; } d += (pen ? "L" : "M") + x(a).toFixed(1) + "," + y(b).toFixed(1); pen = true; }
+  return d;
+}
+function chart(el, o) {
+  const W = el.clientWidth || 600, H = o.height || Math.max(220, Math.min(320, W * 0.55));
+  const m = { t: 14, r: o.right || 16, b: 26, l: 40 };
+  const x = v => m.l + (v - o.x0) / (o.x1 - o.x0) * (W - m.l - m.r);
+  const y = v => H - m.b - (v - o.y0) / (o.y1 - o.y0) * (H - m.t - m.b);
+  let s = `<svg xmlns="${NS}" viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="${esc(o.label || "")}">`;
+  for (const t of niceTicks(o.y0, o.y1, 4)) s += `<line class="${t === 0 ? "nula" : "osa"}" x1="${m.l}" x2="${W - m.r}" y1="${y(t)}" y2="${y(t)}"/><text x="${m.l - 6}" y="${y(t) + 4}" text-anchor="end">${num(t, o.yDec ?? 0)}</text>`;
+  for (const t of o.xTicks) s += `<text x="${x(t)}" y="${H - 8}" text-anchor="middle">${t}</text>`;
+  if (o.areas) for (const a of o.areas) s += `<path d="${a.d(x, y)}" fill="${a.fill}"/>`;
+  if (o.bars) { const bw = Math.max(1, (W - m.l - m.r) / (o.x1 - o.x0) * 0.7); for (const [a, b] of o.bars) if (b != null) s += `<rect x="${x(a) - bw / 2}" y="${Math.min(y(b), y(0))}" width="${bw}" height="${Math.abs(y(b) - y(0))}" fill="${o.barFill}"/>`; }
+  for (const l of o.lines) s += `<path d="${pathD(l.pts, x, y)}" fill="none" stroke="${l.color}" stroke-width="${l.w || 2}" ${l.dash ? `stroke-dasharray="${l.dash}"` : ""} stroke-linejoin="round" stroke-linecap="round"/>`;
+  if (o.dots) for (const d of o.dots) s += `<circle cx="${x(d.x)}" cy="${y(d.y)}" r="${d.r || 4}" fill="${d.fill}" stroke="#fff" stroke-width="1.5"/>` + (d.text ? `<text x="${x(d.x) + (d.dx || 0)}" y="${y(d.y) + (d.dy || -10)}" text-anchor="${d.anchor || "middle"}" style="fill:${d.tc || "var(--navy)"};font-weight:700">${esc(d.text)}</text>` : "");
+  s += `<line id="kurzor" x1="0" x2="0" y1="${m.t}" y2="${H - m.b}" stroke="var(--navy-40)" stroke-dasharray="3 3" style="display:none"/></svg><div class="tip"></div>`;
+  el.innerHTML = s;
+  if (o.tip) {
+    const svg = $("svg", el), tip = $(".tip", el), cur = $("#kurzor", el);
+    const move = (ev) => {
+      const r = svg.getBoundingClientRect(), px = (ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left;
+      const xv = o.x0 + (px - m.l) / (W - m.l - m.r) * (o.x1 - o.x0);
+      const res = o.tip(xv); if (!res) { tip.style.display = "none"; cur.style.display = "none"; return; }
+      cur.setAttribute("x1", x(res.x)); cur.setAttribute("x2", x(res.x)); cur.style.display = "";
+      tip.innerHTML = res.html; tip.style.display = "block"; tip.style.left = Math.min(Math.max(x(res.x), 70), W - 70) + "px"; tip.style.top = (y(res.y)) + "px";
+    };
+    svg.addEventListener("pointermove", move); svg.addEventListener("touchstart", move, { passive: true });
+    svg.addEventListener("pointerleave", () => { tip.style.display = "none"; cur.style.display = "none"; });
+  }
+}
+
+function renderGrafy() {
+  const f = D.physics;
+  if (f) {
+    const mm = f.monthly.filter(r => +r[0].slice(0, 4) >= 1990).map(r => [+r[0].slice(0, 4) + (+r[0].slice(5) - 0.5) / 12, r[1], r[2], r[0]]);
+    const ys = mm.map(r => r[1]);
+    chart($("#g-konc"), {
+      label: "Koncentrace CO2", x0: 1990, x1: mm[mm.length - 1][0] + 0.5, y0: Math.floor(Math.min(...ys) / 10) * 10, y1: Math.ceil(Math.max(...ys) / 10) * 10,
+      xTicks: [1990, 2000, 2010, 2020],
+      lines: [{ pts: mm.map(r => [r[0], r[1]]), color: "var(--navy-40)", w: 1.2 }, { pts: mm.map(r => [r[0], r[2]]), color: "var(--navy)", w: 2.2 }],
+      dots: [{ x: mm[mm.length - 1][0], y: mm[mm.length - 1][1], fill: "var(--navy)", text: `${num(mm[mm.length - 1][1], 1)} ppm`, anchor: "end", dx: -6 }],
+      tip: (xv) => { const r = mm.reduce((a, b) => Math.abs(b[0] - xv) < Math.abs(a[0] - xv) ? b : a); return { x: r[0], y: r[1], html: `${r[3]}: <b>${num(r[1], 2)} ppm</b><br>očištěno ${num(r[2], 2)}` }; }
+    });
+    const g = f.growth.filter(r => r[0] >= 1990);
+    const gmax = Math.max(...g.map(r => r[1]));
+    chart($("#g-rust"), {
+      label: "Roční růst koncentrace", x0: 1989.5, x1: g[g.length - 1][0] + 0.5, y0: 0, y1: Math.ceil(gmax), yDec: 0,
+      xTicks: [1990, 2000, 2010, 2020],
+      bars: g.map(r => [r[0], r[1]]), barFill: "var(--navy-15)",
+      lines: [{ pts: g.map(r => [r[0], r[2]]), color: "var(--navy)", w: 2.4 }],
+      dots: [{ x: f.latest.growth5_year, y: f.latest.growth5_ppm, fill: "var(--navy)", text: `${num(f.latest.growth5_ppm, 2)}`, anchor: "end", dx: -6, dy: -8 }],
+      tip: (xv) => { const r = g.find(r => r[0] === Math.round(xv)); return r ? { x: r[0], y: r[1], html: `${r[0]}: <b>${num(r[1], 2)} ppm</b> ± ${num(r[3], 2)}<br>průměr 5 let ${r[2] == null ? "n/a" : num(r[2], 2)}` } : null; }
+    });
+  } else { $("#g-konc").innerHTML = $("#g-rust").innerHTML = `<p class="mut">Data nedostupná.</p>`; }
+
+  const w = D.world;
+  if (w) {
+    const act = w.years.map((yr, i) => [yr, w.co2_gt[i]]);
+    const t = w.trajectory, traj = t.years.map((yr, i) => [yr, t.co2_gt[i]]);
+    const last = act.filter(p => p[1] != null).pop();
+    const trajAt = Object.fromEntries(traj);
+    const gap = act.filter(p => p[0] >= t.years[0] && p[1] != null);
+    const gapD = (x, y) => "M" + gap.map(p => `${x(p[0])},${y(p[1])}`).join("L") + "L" + gap.slice().reverse().map(p => `${x(p[0])},${y(trajAt[p[0]])}`).join("L") + "Z";
+    const i30 = t.years.indexOf(2030);
+    chart($("#g-svet"), {
+      label: "Globální fosilní emise CO2", x0: 1990, x1: 2050, y0: 0, y1: Math.ceil(Math.max(...w.co2_gt.filter(v => v != null)) / 5) * 5, yDec: 0,
+      height: Math.max(260, Math.min(380, ($("#g-svet").clientWidth || 800) * 0.42)),
+      xTicks: [1990, 2000, 2010, 2019, 2030, 2040, 2050],
+      areas: [{ d: gapD, fill: "#f1d6d2" }],
+      lines: [{ pts: traj, color: "var(--seda)", w: 2, dash: "6 5" }, { pts: act, color: "var(--navy)", w: 2.6 }],
+      dots: [
+        { x: last[0], y: last[1], fill: "var(--navy)", text: `${last[0]}: ${num(last[1], 1)} Gt`, anchor: "start", dx: 8, dy: -8 },
+        { x: 2030, y: t.co2_gt[i30], fill: "var(--seda)", text: `2030: ${num(t.co2_gt[i30], 1)} Gt`, anchor: "start", dx: 8, dy: 4, tc: "var(--text-mut)" },
+      ],
+      tip: (xv) => {
+        const yr = Math.round(xv), a = act.find(p => p[0] === yr), tr = trajAt[yr];
+        if ((!a || a[1] == null) && tr == null) return null;
+        return { x: yr, y: a && a[1] != null ? a[1] : tr, html: `${yr}: ${a && a[1] != null ? `<b>${num(a[1], 2)} Gt</b>` : "bez dat"}${tr != null ? `<br>trajektorie ${num(tr, 2)} Gt` : ""}` };
+      }
+    });
+  } else $("#g-svet").innerHTML = `<p class="mut">Data nedostupná.</p>`;
+}
+
+// ------------------------------------------------------------------ tabulka hráčů
+function spark(p, years) {
+  const W = 150, H = 38, x0 = 1990, x1 = 2030;
+  const pts = years.map((yr, i) => [yr, p.series.co2[i]]);
+  const vals = pts.map(q => q[1]).filter(v => v != null).concat([p.target_2030_mt || 0]);
+  const lo = Math.min(...vals), hi = Math.max(...vals);
+  const x = v => 2 + (v - x0) / (x1 - x0) * (W - 6), y = v => H - 3 - (v - lo) / ((hi - lo) || 1) * (H - 6);
+  const by = D.settings.trajectory.base_year;
+  const trajPts = p.base_mt ? [[by, p.base_mt], [2030, p.target_2030_mt]] : [];
+  return `<svg class="spark" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-hidden="true">
+    ${trajPts.length ? `<path d="${pathD(trajPts, x, y)}" stroke="#9a948b" stroke-width="1.4" stroke-dasharray="3 3" fill="none"/>` : ""}
+    <path d="${pathD(pts, x, y)}" stroke="${CLR[p.status]}" stroke-width="1.8" fill="none" stroke-linejoin="round"/>
+    ${p.target_2030_mt ? `<circle cx="${x(2030)}" cy="${y(p.target_2030_mt)}" r="2.5" fill="#9a948b"/>` : ""}</svg>`;
+}
+
+function renderTabulka() {
+  if (!D.players) { $("#tab tbody").innerHTML = `<tr><td colspan="10">Data nedostupná.</td></tr>`; return; }
+  const items = D.players.items.slice().sort((a, b) => (b.gap_pct ?? -1e9) - (a.gap_pct ?? -1e9));
+  const cls = v => v == null ? "" : v > 0 ? "poz" : "neg";
+  $("#tab tbody").innerHTML = items.map(p => `
+    <tr class="${p.role === "world" ? "svet" : p.role === "home" ? "domov" : ""}">
+      <td>${esc(p.name)}</td>
+      <td class="st"><span class="pill"><span class="tecka" data-s="${p.status}"></span>${LBL[p.status]}</span></td>
+      <td class="cislo ${cls(p.gap_pct)}">${pct(p.gap_pct, 0)}</td>
+      <td class="cislo">${pct(p.cagr5)}</td>
+      <td class="cislo mut">${pct(p.required)}</td>
+      <td class="cislo" title="rok ${p.year}">${num(p.co2_mt, 0)}</td>
+      <td class="cislo">${num(p.per_capita_t, 1)}</td>
+      <td class="cislo">${pct(p.vs_base, 0)}</td>
+      <td class="cislo" title="vrchol ${p.peak_year}: ${num(p.peak_mt, 0)} Mt">${p.vs_peak === 0 ? `<span class="poz">vrchol ${p.peak_year}</span>` : `${pct(p.vs_peak, 0)} <span class="mut male">(${p.peak_year})</span>`}</td>
+      <td style="text-align:left">${spark(p, D.players.years)}</td>
+    </tr>`).join("");
+}
+
+// ------------------------------------------------------------------ export
+function csv() {
+  const rows = [["sada", "hrac", "rok", "metrika", "hodnota", "jednotka", "zdroj"]];
+  const src = (k) => D.sources[k] ? D.sources[k].name : "";
+  if (D.players) for (const p of D.players.items) {
+    D.players.years.forEach((yr, i) => {
+      if (p.series.co2[i] != null) rows.push(["emise", p.name, yr, "fosilni_co2", p.series.co2[i], "Mt CO2", src("owid")]);
+      if (p.series.per_capita[i] != null) rows.push(["emise", p.name, yr, "fosilni_co2_na_obyvatele", p.series.per_capita[i], "t CO2", src("owid")]);
+    });
+    for (const [k, u] of [["co2_mt", "Mt CO2"], ["vs_base", "podil"], ["gap_pct", "podil"], ["gap_mt", "Mt CO2"], ["traj_mt", "Mt CO2"], ["target_2030_mt", "Mt CO2"], ["cagr5", "podil za rok"], ["required", "podil za rok"], ["vs_peak", "podil"], ["change5_mt", "Mt CO2"], ["status", ""]])
+      rows.push(["ukazatele", p.name, p.year, k, p[k], u, src("owid")]);
+  }
+  if (D.world) D.world.trajectory.years.forEach((yr, i) => rows.push(["trajektorie", "Svět", yr, "fosilni_co2_trajektorie", D.world.trajectory.co2_gt[i], "Gt CO2", D.settings.trajectory.source]));
+  if (D.physics) {
+    D.physics.growth.forEach(r => rows.push(["fyzika", "Mauna Loa", r[0], "rocni_rust", r[1], "ppm/rok", src("noaa")]));
+    D.physics.monthly.forEach(r => rows.push(["fyzika", "Mauna Loa", r[0], "koncentrace_mesicni", r[1], "ppm", src("noaa")]));
+  }
+  const text = rows.map(r => r.map(v => v == null ? "" : /[",;\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : v).join(",")).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(["﻿" + text], { type: "text/csv;charset=utf-8" }));
+  a.download = `co2-tracker-${D.today}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+async function png() {
+  const btn = $("#btn-png"); btn.disabled = true; btn.textContent = "Připravuji…";
+  try {
+    if (!window.html2canvas) throw new Error("Knihovna html2canvas se nenačetla.");
+    const c = await html2canvas($("#prehled"), { backgroundColor: "#efeae2", scale: 2, useCORS: true, windowWidth: 1200, ignoreElements: el => el.classList && el.classList.contains("akce") });
+    const a = document.createElement("a"); a.href = c.toDataURL("image/png"); a.download = `co2-prehled-${D.today}.png`; a.click();
+  } catch (e) { alert("PNG se nepodařilo vytvořit: " + e.message); }
+  btn.disabled = false; btn.textContent = "Stáhnout přehled (PNG)";
+}
+
+// ------------------------------------------------------------------ start
+fetch("site.json", { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => {
+  D = d;
+  $("#aktualizace").textContent = "Aktualizováno " + datum(d.generated);
+  renderVarovani(); renderSemafory(); renderGrafy(); renderTabulka(); renderZdroje();
+  let t; addEventListener("resize", () => { clearTimeout(t); t = setTimeout(renderGrafy, 150); });
+}).catch(e => {
+  $("#aktualizace").textContent = "Data se nepodařilo načíst";
+  $("#varovani").innerHTML = `<div>Soubor site.json se nepodařilo načíst (${esc(e.message)}).</div>`;
+});
+$("#btn-csv").addEventListener("click", () => D && csv());
+$("#btn-png").addEventListener("click", () => D && png());
+})();
+</script>
+</body>
+</html>

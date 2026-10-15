@@ -1,0 +1,22 @@
+# Sledovaní hráči. Nový hráč = jeden řádek.
+#   id     vlastní zkratka (ISO3, u EU "EU27", u světa "WLD")
+#   name   český název na stránce
+#   owid   přesný název v owid-co2-data.csv (sloupec country)
+#   ember  přesný název v Ember CSV (sloupec Area), použije se ve fázi 4
+#   part_of  hráč je součástí jiného hráče; do žebříčku "kdo táhne výsledek" se nepočítá dvakrát
+#   role   world | player | home
+players:
+  - {id: WLD,  name: Svět,             owid: World,                ember: World,                     role: world}
+  - {id: CHN,  name: Čína,             owid: China,                ember: China,                     role: player}
+  - {id: USA,  name: USA,              owid: United States,        ember: United States of America,  role: player}
+  - {id: EU27, name: EU27,             owid: European Union (27),  ember: EU,                        role: player}
+  - {id: IND,  name: Indie,            owid: India,                ember: India,                     role: player}
+  - {id: RUS,  name: Rusko,            owid: Russia,               ember: Russian Federation (the),  role: player}
+  - {id: JPN,  name: Japonsko,         owid: Japan,                ember: Japan,                     role: player}
+  - {id: IRN,  name: Írán,             owid: Iran,                 ember: Iran (Islamic Republic of), role: player}
+  - {id: SAU,  name: Saúdská Arábie,   owid: Saudi Arabia,         ember: Saudi Arabia,              role: player}
+  - {id: IDN,  name: Indonésie,        owid: Indonesia,            ember: Indonesia,                 role: player}
+  - {id: KOR,  name: Jižní Korea,      owid: South Korea,          ember: South Korea,               role: player}
+  - {id: BRA,  name: Brazílie,         owid: Brazil,               ember: Brazil,                    role: player}
+  - {id: DEU,  name: Německo,          owid: Germany,              ember: Germany,                   role: player, part_of: EU27}
+  - {id: CZE,  name: Česko,            owid: Czechia,              ember: Czechia,                   role: home,   part_of: EU27}

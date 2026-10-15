@@ -1,0 +1,16 @@
+# Adresy zdrojů. Odkaz "page" je stránka datové sady (pro dohledání), "files" jsou soubory ke stažení.
+noaa:
+  name: NOAA GML, Mauna Loa CO2
+  page: https://gml.noaa.gov/ccgg/trends/
+  license: veřejná data, citace podle hlavičky souboru
+  files:
+    monthly: https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.csv
+    growth: https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_gr_mlo.csv
+
+owid:
+  name: Our World in Data, CO2 and Greenhouse Gas Emissions (Global Carbon Budget)
+  page: https://github.com/owid/co2-data
+  license: CC BY 4.0
+  files:
+    co2: https://raw.githubusercontent.com/owid/co2-data/master/owid-co2-data.csv
+  commits_api: https://api.github.com/repos/owid/co2-data/commits?path=owid-co2-data.csv&per_page=1

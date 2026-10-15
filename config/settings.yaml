@@ -1,0 +1,28 @@
+# Parametry výpočtů. Definice jsou popsané i v README.
+
+trajectory:
+  # IPCC AR6 WG3, SPM C.1, cesty C1 (1,5 °C, bez nebo s omezeným překmitem).
+  # Pro CO2 platí -48 % v 2030 a -99 % v 2050 oproti 2019.
+  # (-43 % / -84 % je cíl pro skleníkové plyny celkem, CO2e; používá se jen u doplňkového sloupce.)
+  base_year: 2019
+  co2:  {2030: -0.48, 2050: -0.99}
+  ghg:  {2030: -0.43, 2050: -0.84}
+  target_year: 2030
+  source: IPCC AR6 WG3 SPM C.1
+  source_url: https://www.ipcc.ch/report/ar6/wg3/chapter/summary-for-policymakers/
+
+status:
+  cagr_years: 5            # tempo = průměrná roční změna (CAGR) za posledních N let
+  on_track_share: 0.8      # na trajektorii = skutečný pokles >= 80 % potřebného tempa
+
+physics:
+  window: 5                # klouzavý průměr ročního růstu koncentrace
+  stabilising_ppm: 0.5     # 5letý průměrný růst pod touto hodnotou = koncentrace přestává růst
+
+series_start: 1990
+
+# Kdy data považujeme za zastaralá: počet dní od konce posledního datového období.
+freshness_days:
+  noaa_monthly: 45         # měsíční průměr vychází začátkem následujícího měsíce
+  noaa_annual: 60          # roční růst vychází v lednu
+  owid: 790                # rok Y vychází v listopadu Y+1 (GCB); další rok přijde o 12 měsíců později
